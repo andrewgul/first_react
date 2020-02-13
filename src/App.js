@@ -1,24 +1,33 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, {useEffect, useState} from 'react';
 import './App.css';
+import  Question from './Question'
 
-function App() {
+const App = () => {
+
+  // Вот это -- стейт
+  const [questions, setQuestions] = useState([])
+
+  // Это вроде как происходит один раз при загрузке страницы 
+  // и остальные разы, когда что-то перерендеривается
+  useEffect(() => {
+    getQuestions()
+  }, [])
+
+  const getQuestions = async () => {
+    const response = await fetch("https://opentdb.com/api.php?amount=5")
+    const data = await response.json()
+    console.log(data.results)
+    setQuestions(data.results)
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="wrapper">
+      <div className="App">
+        <h1> 5 random questions </h1>
+        {questions.map(question => (
+          <Question quest={question.question} ans={question.correct_answer}/>
+        ))}
+      </div>
     </div>
   );
 }
